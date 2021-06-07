@@ -1,0 +1,31 @@
+extend type Mutation {
+    update_user(input: UpdateUserInput! @spread): User @guard @field(resolver: "App\\GraphQL\\Mutations\\UserMutations@updateUser")
+}
+
+input UpdateUserInput{
+    id: ID!
+    name: String
+    username: String
+    email: String
+}
+
+type Query {
+    all_users: [User!]! @all
+#    all_users(page: Int = 1, count: Int = 15): [User!]! @field(resolver: "UserQuery@paginate")
+#    all_users: [User!]! @paginate
+    detail_user(id: ID @eq): User @find
+    sort_users(orderBy: [OrderByClause!] @orderBy): [User!]! @paginate(type: "paginator" model: "App\\Models\\User")
+    jobsByStatus(status: JobStatus!):[Job!]! @field(resolver: "JobQuery@byStatus")
+}
+
+type User {
+    id: ID!
+    name: String!
+    username: String!
+    email: String!
+    job: [Job!]! @hasMany #job là tên quan hệ
+#    job: [Job!]! @hasMany #không cần phải thêm khóa ở Database
+#    job: [Job!]! @field(resolver: "App\\GraphQL\\Types\\UserType@jobs")
+#    created_at: DateTime!
+#    updated_at: DateTime!
+}
